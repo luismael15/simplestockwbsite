@@ -1,8 +1,14 @@
 document.getElementById('fetchData').addEventListener('click', async () => {
-    const symbol = document.getElementById('stockSymbol').value.toUpperCase();
-    
+    const symbol = document.getElementById('stockSymbol').value.toUpperCase(); // Get user input
+
     try {
-        const response = await fetch(`https://query2.finance.yahoo.com/v8/finance/chart/${symbol}`);
+        // Fetch data from your Express proxy instead of directly from Yahoo Finance
+        const response = await fetch(`http://localhost:3001/api/finance/${symbol}`);
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
         const data = await response.json();
 
         if (data.chart.result) {
