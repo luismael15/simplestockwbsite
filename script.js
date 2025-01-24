@@ -52,7 +52,7 @@ function drawChart(timestamps, prices) {
             datasets: [{
                 label: 'Price',
                 data: prices,
-                borderColor: 'rgba(75, 192, 192, 1)',
+                borderColor: 'rgb(38, 7, 238)',
                 fill: false
             }]
         },
