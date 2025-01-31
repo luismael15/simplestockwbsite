@@ -4,16 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Analysis Tool</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <div class="container">
-        <h1>Stock Analysis Tool</h1>
-        <input type="text" id="stockSymbol" placeholder="Enter Stock Symbol (e.g., AAPL)">
-        <button id="fetchData">Fetch Data</button>
-        <button id="downloadCSV">Download CSV</button>
-        
-        <table id="metricsTable">
+<body class="bg-light text-dark font-roboto">
+    <div class="container my-5">
+        <h1 class="text-center mb-4">Stock Analysis Tool</h1>
+        <div class="input-group mb-3">
+            <input type="text" id="stockSymbol" class="form-control" placeholder="Enter Stock Symbol (e.g., AAPL)" style="width: 50%;">
+            <div class="input-group-append">
+                <button id="fetchData" class="btn btn-primary ml-2">Fetch Data</button>
+            </div>
+        </div>
+        <button id="downloadCSV" class="btn btn-secondary mb-4">Download CSV</button>
+
+        <table id="metricsTable" class="table table-bordered table-striped">
             <thead>
                 <tr>
                     <th>Metric</th>
@@ -23,10 +31,18 @@
             <tbody></tbody>
         </table>
 
-        <canvas id="priceChart"></canvas>
+        <canvas id="priceChart" class="mt-4"></canvas>
     </div>
 
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <!-- Include Chart.js from CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Your custom script -->
     <script src="script.js"></script>
 </body>
 </html>

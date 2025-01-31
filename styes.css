@@ -1,37 +1,57 @@
+/* Base styles */
 body {
-    background-color: #121212;
-    color: #ffffff;
-    font-family: Arial, sans-serif;
+    background-color: #f7f9fc; /* Light background for a calm feel */
+    color: #333; /* Dark text for contrast */
+    font-family: 'Roboto', sans-serif; /* Harmonious font */
 }
 
-.container {
-    width: 80%;
-    margin: auto;
-    padding: 20px;
+h1 {
+    color: #007bff; /* Calm blue color for the header */
 }
 
+/* Input and button styles */
 input[type="text"] {
     padding: 10px;
-    width: 200px;
 }
 
 button {
-    padding: 10px;
-    margin-left: 10px;
+    margin-left: 10px; /* Space between input and button */
 }
 
+/* Table styles */
 table {
-    width: 100%;
     margin-top: 20px;
-    border-collapse: collapse;
 }
 
 th, td {
-    border: 1px solid #ffffff;
-    padding: 10px;
-    text-align: left;
+    padding: 15px; /* Increased padding for better spacing */
 }
 
+th {
+    background-color: #e9ecef; /* Light gray background for headers */
+}
+
+/* Chart styles */
 canvas {
     margin-top: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .container {
+        width: 95%; /* Full width on small screens */
+        padding: 10px; /* Less padding on small screens */
+    }
+
+    input[type="text"] {
+        width: calc(100% - 20px); /* Full width input on small screens */
+        margin-bottom: 10px; /* Space below input */
+    }
+
+    button {
+        width: calc(100% - 20px); /* Full width button on small screens */
+        margin-top: 10px; /* Space above button */
+        margin-left: 0; /* No left margin on small screens */
+        display: block; /* Stack buttons vertically */
+    }
 }
