@@ -12,15 +12,19 @@ h1 {
 /* Input and button styles */
 input[type="text"] {
     padding: 10px;
+    border-radius: 25px; /* Rounded corners for input fields */
 }
 
 button {
     margin-left: 10px; /* Space between input and button */
+    border-radius: 25px; /* Rounded corners for buttons */
 }
 
 /* Table styles */
 table {
     margin-top: 20px;
+    border-radius: 15px; /* Rounded corners for the table */
+    overflow: hidden; /* Ensure child elements respect the border radius */
 }
 
 th, td {
@@ -34,6 +38,7 @@ th {
 /* Chart styles */
 canvas {
     margin-top: 20px;
+    border-radius: 15px; /* Rounded corners for the chart canvas */
 }
 
 /* Responsive adjustments */
