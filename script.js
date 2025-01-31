@@ -42,17 +42,25 @@ function updateMetricsTable(metrics) {
     }
 }
 
+let myChart; // Declare a variable to hold the chart instance
+
 function drawChart(timestamps, prices) {
     const ctx = document.getElementById('priceChart').getContext('2d');
-    
-    new Chart(ctx, {
+
+    // Check if the chart already exists and destroy it
+    if (myChart) {
+        myChart.destroy(); // Destroy the existing chart
+    }
+
+    // Create a new chart instance
+    myChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: timestamps.map(ts => new Date(ts * 1000).toLocaleDateString()),
             datasets: [{
                 label: 'Price',
                 data: prices,
-                borderColor: 'rgb(38, 7, 238)',
+                borderColor: 'rgba(75, 192, 192, 1)',
                 fill: false
             }]
         },
@@ -65,6 +73,7 @@ function drawChart(timestamps, prices) {
         }
     });
 }
+
 
 document.getElementById('downloadCSV').addEventListener('click', () => {
     const tableData = Array.from(document.querySelectorAll('#metricsTable tbody tr'))
