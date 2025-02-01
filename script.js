@@ -1,26 +1,29 @@
+// Event listener for fetching stock data when button is clicked
 document.getElementById('fetchData').addEventListener('click', async () => {
-    const symbol = document.getElementById('stockSymbol').value.toUpperCase(); // Get user input
-
+    const symbol = document.getElementById('stockSymbol').value.toUpperCase();
+    
     try {
-        // Fetch data from your Express proxy instead of directly from Yahoo Finance
+        // Fetch data from the Express server
         const response = await fetch(`http://localhost:3001/api/finance/${symbol}`);
-        
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
         const data = await response.json();
 
+        // Check if data is available
         if (data.chart.result) {
-            const result = data.chart.result[0];
+            const result = data.chart.result[0]; // Get first result
+            const currency = result.meta.currency; // Extract currency
+            
+            // Prepare metrics with currency included
             const metrics = {
-                'Current Price': result.meta.regularMarketPrice,
-                'Market Cap': result.meta.marketCap,
-                'P/E Ratio': result.meta.trailingPE,
-                'Dividend Yield': result.meta.dividendYield * 100 + '%'
+                'Current Price': `${currency} ${result.meta.regularMarketPrice}`,
+                'Previous Close': `${currency} ${result.meta.previousClose}`,
+                '52 Week High': `${currency} ${result.meta.fiftyTwoWeekHigh}`,
+                '52 Week Low': `${currency} ${result.meta.fiftyTwoWeekLow}`,
+                'Market Volume': result.meta.regularMarketVolume.toLocaleString(), // Format volume with commas
+                'Long Name': result.meta.longName,
             };
 
-            updateMetricsTable(metrics);
+            // Display metrics without using a table
+            displayStockMetrics(metrics); // Updated function to display metrics properly
             drawChart(result.timestamp, result.indicators.quote[0].close);
         } else {
             alert('Stock symbol not found.');
@@ -31,63 +34,74 @@ document.getElementById('fetchData').addEventListener('click', async () => {
     }
 });
 
-function updateMetricsTable(metrics) {
-    const tbody = document.getElementById('metricsTable').getElementsByTagName('tbody')[0];
-    tbody.innerHTML = ''; // Clear previous data
+// Updated function to properly display stock metrics in a structured way
+function displayStockMetrics(metrics) {
+    const stockMetricsDiv = document.getElementById('stockMetrics');
+    stockMetricsDiv.innerHTML = ''; // Clear previous metrics
 
-    for (const [key, value] of Object.entries(metrics)) {
-        const row = tbody.insertRow();
-        row.insertCell(0).innerText = key;
-        row.insertCell(1).innerText = value;
-    }
+    // Stock metric data
+    const stockData = [
+        { label: "Current Price", value: metrics['Current Price'] },
+        { label: "Previous Close", value: metrics['Previous Close'] },
+        { label: "52 Week High", value: metrics['52 Week High'] },
+        { label: "52 Week Low", value: metrics['52 Week Low'] },
+        { label: "Market Volume", value: metrics['Market Volume'] },
+        { label: "Company", value: metrics['Long Name'] }
+    ];
+
+    const row = document.createElement('div');
+    row.className = 'row g-3'; // Bootstrap row with gap
+
+    stockData.forEach((data) => {
+        const col = document.createElement('div');
+        col.className = 'col-md-6'; // Ensure two boxes per row
+
+        const box = document.createElement('div');
+        box.className = 'alert alert-info p-3 text-center';
+        box.innerHTML = `<strong>${data.label}:</strong> ${data.value}`;
+
+        col.appendChild(box);
+        row.appendChild(col);
+    });
+
+    stockMetricsDiv.appendChild(row);
 }
 
 let myChart; // Declare a variable to hold the chart instance
 
+// Function to draw chart with price data
 function drawChart(timestamps, prices) {
     const ctx = document.getElementById('priceChart').getContext('2d');
 
     // Check if the chart already exists and destroy it
     if (myChart) {
-        myChart.destroy(); // Destroy the existing chart
+        myChart.destroy(); // Destroy existing chart instance
     }
 
-    // Create a new chart instance
-    myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: timestamps.map(ts => new Date(ts * 1000).toLocaleDateString()),
-            datasets: [{
-                label: 'Price',
-                data: prices,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                fill: false
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                xAxes: [{ type: 'time', time: { unit: 'day' } }],
-                yAxes: [{ ticks: { beginAtZero: true } }]
+    // Check if timestamps and prices are defined and are arrays
+    if (Array.isArray(timestamps) && Array.isArray(prices)) {
+        // Create a new chart instance with price data
+        myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timestamps.map(ts => new Date(ts * 1000).toLocaleDateString()), // Format timestamps as dates
+                datasets: [{
+                    label: 'Price',
+                    data: prices, // Price data for charting
+                    borderColor: 'rgba(75, 192, 192, 1)', // Line color for chart
+                    fill: false // Do not fill under the line
+                }]
+            },
+            options: {
+                responsive: true, // Make chart responsive
+                scales: {
+                    xAxes: [{ type: 'time', time: { unit: 'day' } }], // Time scale for x-axis
+                    yAxes: [{ ticks: { beginAtZero: true } }] // Start y-axis at zero
+                }
             }
-        }
-    });
+        });
+    } else {
+        console.error('Timestamps or prices are not valid arrays:', timestamps, prices);
+        alert('No data available for this stock symbol.');
+    }
 }
-
-
-document.getElementById('downloadCSV').addEventListener('click', () => {
-    const tableData = Array.from(document.querySelectorAll('#metricsTable tbody tr'))
-                            .map(row => Array.from(row.cells).map(cell => cell.innerText));
-    
-    let csvContent = "data:text/csv;charset=utf-8," + tableData.map(e => e.join(",")).join("\n");
-    
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "stock_data.csv");
-    
-    document.body.appendChild(link);
-    
-    link.click();
-});
